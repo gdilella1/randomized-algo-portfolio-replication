@@ -1,0 +1,110 @@
+function test_CUR(A, ranks, algos, tag)
+    %% 1. Gestione Input Matrice
+    if iscell(A)
+        AL = A{1}; AR = A{2};
+        [m, r_inner] = size(AL); [~, n] = size(AR);
+    else
+        [m, n] = size(A);
+        [U, S, V] = svd(full(A), 'econ');
+        AL = U * S; AR = V';
+        A = {AL, AR};
+    end
+
+    %% 2. Calcolo spettro e norme di riferimento
+    [~, TL] = qr(full(AL), 0);
+    [~, TR] = qr(full(AR'), 0);
+    spec = svd(TL * TR'); 
+    norm_A_fro = norm(spec);    
+    norm_A_2 = max(spec);       
+    
+    if ~exist('algos','var') || isempty(algos)
+        algos = {'SRCUR','CPQR','LUPP','RSVDLS'}; 
+    end
+    if ~exist('tag','var') || isempty(tag), tag = 'Analisi_CUR'; end
+    
+    k_vec = ranks;
+    time = struct(); errfro = struct(); err2 = struct();
+
+    %% 3. Esecuzione Algoritmi
+    for idx = 1:length(algos)
+        algo = algos{idx};
+        fprintf('Calcolo in corso: %s \n', algo)
+        time.(algo) = zeros(size(k_vec));
+        errfro.(algo) = zeros(size(k_vec));
+        err2.(algo) = zeros(size(k_vec));
+        
+        for t = 1:length(k_vec)
+            k = k_vec(t);
+            tic;
+            [i, j] = cur_algos(algo, A, k); % Assicurati che rsvd_oracle sia corretto con [Q, ~]
+            time.(algo)(t) = toc;
+            
+            % Calcolo errore relativo
+            CR = AR(:, j(1:k)); [Qcr, ~] = qr(full(CR), 0);
+            RL = AL(i(1:k), :); [Qrl, ~] = qr(full(RL'), 0);
+            
+            Ecore = eye(size(AL,2)) - (Qcr * (Qcr' * Qrl)) * Qrl';
+            Euinv = (TL * Ecore) * TR';
+            
+            errfro.(algo)(t) = norm(Euinv, 'fro') / norm_A_fro;
+            err2.(algo)(t) = norm(Euinv) / norm_A_2;
+        end
+    end
+
+    %% 4. Sezione Plotting (Configurazione Logaritmica Forzata)
+    figure('Name', ['Replication Paper: ' tag], 'Position', [100, 100, 1400, 480], 'Color', 'w');
+    markers = {'o', 's', '^', 'd', 'v', 'p', 'h', '*'};
+    colors = lines(length(algos));
+
+    % --- (A) Frobenius norm error ---
+    subplot(1,3,1); hold on;
+    svd_err_fro = zeros(size(k_vec));
+    for t = 1:length(k_vec), svd_err_fro(t) = norm(spec(k_vec(t)+1:end)) / norm_A_fro; end
+    
+    semilogy(k_vec, svd_err_fro, 'k', 'LineWidth', 2, 'DisplayName', 'Optimal (SVD)');
+    for idx = 1:length(algos)
+        semilogy(k_vec, errfro.(algos{idx}), '-', 'Color', colors(idx,:), ...
+            'LineWidth', 1.5, 'MarkerFaceColor', 'none', 'DisplayName', algos{idx});
+    end
+    configura_asse_log('||A - CUR||_F / ||A||_F', '(A) Frobenius norm error');
+
+    % --- (B) Spectral norm error ---
+    subplot(1,3,2); hold on;
+    svd_err_2 = zeros(size(k_vec));
+    for t = 1:length(k_vec), svd_err_2(t) = spec(k_vec(t)+1) / norm_A_2; end
+    
+    semilogy(k_vec, svd_err_2, 'k', 'LineWidth', 2, 'DisplayName', 'Optimal (SVD)');
+    for idx = 1:length(algos)
+        semilogy(k_vec, err2.(algos{idx}), '-', 'Color', colors(idx,:), ...
+            'LineWidth', 1.5, 'MarkerFaceColor', 'none', 'DisplayName', algos{idx});
+    end %['-' markers{mod(idx-1,8)+1}]
+    configura_asse_log('||A - CUR||_2 / ||A||_2', '(B) Spectral norm error');
+
+    % --- (C) Runtime ---
+    subplot(1,3,3); hold on;
+    for idx = 1:length(algos)
+        semilogy(k_vec, time.(algos{idx}), '-', 'Color', colors(idx,:), ...
+            'LineWidth', 1.5, 'MarkerFaceColor', 'none', 'DisplayName', algos{idx});
+    end
+    configura_asse_log('Time (s)', 'Runtime');
+    
+    legend('Location', 'northeastoutside', 'Interpreter', 'none');
+end
+
+% --- Sottofunzione per la formattazione degli assi ---
+function configura_asse_log(y_label_text, title_text)
+    grid on;
+    set(gca, 'YScale', 'log');      % Forza la scala logaritmica
+    set(gca, 'YMinorGrid', 'on');   % Attiva la griglia dei sottomultipli
+    set(gca, 'TickDir', 'in');      % Ticks verso l'interno (stile paper)
+    xlabel('k');
+    ylabel(y_label_text);
+    title(title_text);
+    
+    % Forza il formato 10^x sulle etichette se MATLAB usa i decimali
+    % Questo comando cattura i tick correnti e li formatta esplicitamente
+    ytick = get(gca, 'YTick');
+    if any(ytick > 0)
+        set(gca, 'YTickLabel', arrayfun(@(x) sprintf('10^{%.0f}', log10(x)), ytick, 'UniformOutput', false));
+    end
+end
