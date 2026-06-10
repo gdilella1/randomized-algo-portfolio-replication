@@ -16,14 +16,3 @@ Replicating a financial index or a target portfolio with a limited subset of ass
   * `src/portfolio/`: Replication and optimization scripts.
   * `src/plotting/`: Scripts for tracking error and asset weight visualization.
 * `docs/`: The Beamer presentation PDF and LaTeX source files.
-
-## Theoretical Background
-Traditional methods like standard Principal Component Analysis (PCA) via deterministic SVD can be computationally expensive on large-scale high-frequency financial data and prone to overfitting under market regime shifts. Randomized algorithms solve this by drawing random samples from the matrix column space, offering:
-1. Significant computational speedups.
-2. Robustness against high-frequency noise.
-3. Strict, predictable probabilistic error bounds.
-
-## How to Run
-1. Open MATLAB and navigate to the root directory.
-2. Add the source folders to your path: `addpath(genpath('src/'));`
-3. Execute `main.m` to run the simulation, construct the replicating portfolio, and output the tracking performance plots.
