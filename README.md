@@ -12,7 +12,8 @@ Replicating a financial index or a target portfolio with a limited subset of ass
 
 ## Repository Structure
 * `src/`: Core MATLAB functions and the main execution script (`main.m`).
-  * `src/algorithms/`: Randomized matrix decomposition routines.
-  * `src/portfolio/`: Replication and optimization scripts.
+  * `src/algorithms/`: Randomized linear algebra routines.
+  * `src/portfolio/`: Replication and portfolio construction scripts.
   * `src/plotting/`: Scripts for tracking error and asset weight visualization.
-* `docs/`: The Beamer presentation PDF and LaTeX source files.
+* `docs/`: The Beamer presentation PDF file.
+* `miscellaneous/`: other files.
