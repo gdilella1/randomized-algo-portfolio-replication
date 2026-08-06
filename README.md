@@ -22,12 +22,12 @@ addpath(genpath('src'));
 ```
 
 ### 2. Core Matrix Approximation & Portfolio Construction
-Compute CUR decomposition and calculate index replication weights for a target asset universe:
+Compute CUR/ID decompositions and calculate index replication weights for a target asset universe:
 ```matlab
-% Select asset subset (e.g., 15 or 30 stocks) via randomized LUPP
-[C, R, U, J_s] = CUR_LUPP(A, k);
+% Select asset/row subsets (e.g., k = 15 or 30) via randomized LUPP
+[~, J_s] = CUR_LUPP(A, k, ...);
 
-% Calculate portfolio replication weights
+% Calculate portfolio replication weights for the selected skeleton J_s
 weights = portfolios.calcolaCoefficientiReplica(A, J_s);
 ```
 
