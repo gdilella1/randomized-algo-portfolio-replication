@@ -1,17 +1,17 @@
 # Portfolio Replication via Randomized Low-Rank Matrix Approximations
 
-This repository contains the MATLAB codebase and presentation materials for a project focused on Numerical Linear Algebra applied to Quantitative Finance[cite: 8, 9]. The core objective is to construct an index-replicating tracking portfolio (S&P 100) using randomized pivoting algorithms for low-rank matrix decomposition (CUR and Interpolative Decomposition - ID)[cite: 8, 9].
+This repository contains the MATLAB codebase and presentation materials for a project focused on Numerical Linear Algebra applied to Quantitative Finance. The core objective is to construct an index-replicating tracking portfolio (S&P 100) using randomized pivoting algorithms for low-rank matrix decomposition (CUR and Interpolative Decomposition - ID).
 
 ## Executive Summary
-Replicating a financial index or target portfolio with a sparse subset of constituents (e.g., 15 to 30 assets) is a central problem in portfolio management aimed at minimizing transaction costs while matching benchmark performance[cite: 8, 9]. 
+Replicating a financial index or target portfolio with a sparse subset of constituents (e.g., 15 to 30 assets) is a central problem in portfolio management aimed at minimizing transaction costs while matching benchmark performance. 
 
-This project benchmarks randomized numerical linear algebra (RandNLA) algorithms—specifically randomized LUPP, CPQR, DEIM, Leverage Score sampling, and Rangefinder—applied to asset cross-correlation matrices[cite: 9]. By extracting column/row skeletons via randomized sketching and power iteration, the pipeline identifies dominant latent factors driving index dynamics and solves a constrained least-squares problem to compute optimal replication weights[cite: 8, 9].
+This project benchmarks randomized numerical linear algebra (RandNLA) algorithms—specifically randomized LUPP, CPQR, DEIM, Leverage Score sampling, and Rangefinder—applied to asset cross-correlation matrices. By extracting column/row skeletons via randomized sketching and power iteration, the pipeline identifies dominant latent factors driving index dynamics and solves a constrained least-squares problem to compute optimal replication weights.
 
 ## Key Features & Empirical Findings
-* **Randomized Pivoting Algorithms:** Implementation of randomized LUPP (LU with partial pivoting) and CPQR (Column Pivoting QR) with optional power iteration steps to accelerate column/row selection from large-scale covariance/correlation structures[cite: 8, 9].
-* **Comparative Algorithm Benchmarking:** Evaluates DEIM (Discrete Empirical Interpolation Method), Leverage Score sampling, and deterministic baselines against randomized pivoting[cite: 9].
-* **Index Tracking Performance:** Construct sparse tracking portfolios for the S&P 100 index across multiple rolling horizons (2, 3, and 4 months)[cite: 9].
-* **Empirical Results:** Demonstrates that randomized LUPP methods consistently outperform Leverage Score sampling in out-of-sample tracking error ($L_1$-norm) while maintaining low computational overhead[cite: 9].
+* **Randomized Pivoting Algorithms:** Implementation of randomized LUPP (LU with partial pivoting) and CPQR (Column Pivoting QR) with optional power iteration steps to accelerate column/row selection from large-scale covariance/correlation structures.
+* **Comparative Algorithm Benchmarking:** Evaluates DEIM (Discrete Empirical Interpolation Method), Leverage Score sampling, and deterministic baselines against randomized pivoting.
+* **Index Tracking Performance:** Construct sparse tracking portfolios for the S&P 100 index across multiple rolling horizons (2, 3, and 4 months).
+* **Empirical Results:** Demonstrates that randomized LUPP methods consistently outperform Leverage Score sampling in out-of-sample tracking error ($L_1$-norm) while maintaining low computational overhead.
 
 ## Quick Start (MATLAB)
 
